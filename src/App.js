@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import SearchBar from './components/SearchBar';
+import VideoList from './components/VideoList';
+import VideoDetail from './components/VideoDetail';
+import { searchVideos } from './api/youtube';
+import './App.css'; // Добавим файл со стилями
 
 function App() {
+  const [videos, setVideos] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
+  const handleSearch = async (query) => {
+    const results = await searchVideos(query);
+    setVideos(results);
+    setSelectedVideo(results[0]);
+  };
+
+  const handleVideoSelect = (video) => {
+    setSelectedVideo(video);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app-container">
+      <SearchBar onSearch={handleSearch} />
+      <div className="content-container">
+        <VideoDetail video={selectedVideo} />
+        <VideoList videos={videos} onVideoSelect={handleVideoSelect} />
+      </div>
     </div>
   );
 }
